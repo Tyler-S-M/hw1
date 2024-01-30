@@ -3,7 +3,7 @@ CFLAGS = -fopenmp -llapack -lopenblaso
 CLIBS = 
 #CLIBS = -lblas
 
-all:	hw1.cpp
+all:	hw1.c
 
 gprof:
 	$(CC) $(CFLAGS) -pg -o hw1 hw1.c $(CLIBS)
