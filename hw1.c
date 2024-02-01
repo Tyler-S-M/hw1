@@ -10,7 +10,7 @@
 #include <time.h>
 #include "cblas.h"
 
-#define N 8192		// length of vector, length and width of matrix
+#define N 1024		// length of vector, length and width of matrix
 #define SEED 1		// random number seed
 #define REPS 1000	// repetitions
 //#define OUT   	// output flag
@@ -29,38 +29,53 @@ void reset_vect(){
 		result[i] = 0.0;
 }
 
+double timeSub(struct timespec end, struct timespec start){
+
+	double returnVal = 0.0;
+		
+	returnVal += ((double)(end.tv_nsec - start.tv_nsec))/10000000000;
+	returnVal += (end.tv_sec - start.tv_sec);
+
+	return returnVal;
+
+}
+
 int main() {
 	int i;
-	time_t start;
+	struct timespec start;
+	struct timespec end;
 
 	initialize();
 
-    start = time(NULL);
+    	clock_gettime(CLOCK_MONOTONIC, &start);
 	for (i=0; i<REPS; i++) {
 		vm_multiply_parallel();
 	}
-	printf("Time Taken OpenMP: %ld\n", time(NULL) - start);
+	clock_gettime(CLOCK_MONOTONIC, &end);
+	printf("Time Taken OpenMP: %lf\n", timeSub(end, start));
 
 	output();
 
-	long aggregate = 0.0;
+	double aggregate = 0.0;
 	for (i=0; i<REPS; i++) {
-		start = time(NULL);
+		clock_gettime(CLOCK_MONOTONIC, &start);
 		cblas_dgemv(CblasRowMajor, CblasNoTrans, N, N, 1.0, (const double*)matrix, N, vector, 1, 1.0, result, 1);
-		aggregate += (time(NULL) - start);
+		clock_gettime(CLOCK_MONOTONIC, &end);
+		aggregate += (timeSub(end, start));
 
 		if (i != REPS-1)
 			reset_vect();
 	}
-	printf("Time Taken CBlas: %ld\n", aggregate);
+	printf("Time Taken CBlas: %lf\n", aggregate);
 
 	output();
 
-	start = time(NULL);
+	clock_gettime(CLOCK_MONOTONIC, &start);
 	for (i=0; i<REPS; i++) {
 		vm_multiply_sequential();
 	}
-	printf("Time Taken Sequential: %ld\n", time(NULL) - start);
+	clock_gettime(CLOCK_MONOTONIC, &end);
+	printf("Time Taken Sequential: %lf\n", timeSub(end, start));
 
 	output();
 	return 0;
