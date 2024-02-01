@@ -33,7 +33,7 @@ double timeSub(struct timespec end, struct timespec start){
 
 	double returnVal = 0.0;
 		
-	returnVal += ((double)(end.tv_nsec - start.tv_nsec))/10000000000;
+	returnVal += ((double)(end.tv_nsec - start.tv_nsec))/1000000000;
 	returnVal += (end.tv_sec - start.tv_sec);
 
 	return returnVal;
