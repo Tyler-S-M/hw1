@@ -1,7 +1,7 @@
-CC = g++
-CFLAGS = -fopenmp -llapack -lopenblaso
+CC = gcc
+CFLAGS = -Wall -O2 -fopenmp -llapack -lopenblas
+CFLAGSNOBLASO = -Wall -O2 -fopenmp -lblas
 CLIBS = 
-#CLIBS = -lblas
 
 all:	hw1.c
 
@@ -14,8 +14,11 @@ operf:
 perf:
 	$(CC) $(CFLAGS) -ggdb -o hw1 hw1.c $(CLIBS)
 
+blas:
+	$(CC) hw1.c -o hw1 $(CFLAGSNOBLASO)
+
 norm:
-	$(CC) hw1.c $(CFLAGS) -o hw1 $(CLIBS)
+	$(CC) $(CFLAGS) -o hw1 hw1.c $(CLIBS)
 
 clean:
 	rm -rf hw1
